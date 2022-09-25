@@ -1,0 +1,7 @@
+/venv
+/dist
+/audio
+/build
+*.spec
+*.txt
+**/__pycache__

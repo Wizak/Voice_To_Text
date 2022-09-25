@@ -1,0 +1,1 @@
+pyinstaller --onefile --windowed --add-data "static/icon.ico;/static/." --add-data "static/language_tags.json;/static/." --hidden-import="utils" --hidden-import="components" --icon=static/icon.ico --name "Аудіо в Текст" main.py
