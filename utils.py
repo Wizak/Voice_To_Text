@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import speech_recognition as sr
 
 from pydub import AudioSegment
@@ -41,3 +42,10 @@ def get_file_path(filename):
     path_to_file = os.path.abspath(
         os.path.join(bundle_dir, 'static/' + filename))
     return path_to_file
+
+
+def get_lang_tags():
+    json_path = get_file_path('language_tags.json')
+    with open(json_path, 'r') as file:
+        lang_tags = json.load(file)
+    return lang_tags

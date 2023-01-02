@@ -6,15 +6,18 @@ from utils import convert_ogg_to_wav
 from utils import recognition
 from utils import save_extract_text
 from utils import get_file_path
+from utils import get_lang_tags
 
 
 def window_program():
     EXTRACT = ''
-
-    layout = components()
-    icon = get_file_path('icon.ico')
-    window = sg.Window('Аудіо в Текст', layout, size=(800, 600), icon=icon)
     timeout = int(1000/60)
+    
+    layout = components()
+    lang_tags = get_lang_tags()
+    icon = get_file_path('icon.ico')
+    
+    window = sg.Window('Аудіо в Текст', layout, size=(800, 600), icon=icon)
 
     while True:
         event, values = window.read(timeout=timeout)
@@ -24,8 +27,19 @@ def window_program():
 
         if event == '-RECOGNITION-':
             if values['-FILENAME READ-'] != '':
-                EXTRACT = recognition(values['-FILENAME READ-'])
-                window['-TEXT-'].update(EXTRACT)
+                chs_lang_tag = values['-CHOOSE LANG TAG-']
+                
+                if chs_lang_tag in lang_tags:
+                    lang = lang_tags[chs_lang_tag]
+                    try:
+                        EXTRACT = recognition(values['-FILENAME READ-'], lang=lang)
+                        window['-TEXT-'].update(EXTRACT)
+                    except Exception as e:
+                        sg.Popup('Короткий або довгий аудіо файл!', title='Помилка !')
+                        
+                else:
+                    sg.Popup('Неправильно обрана мова!',
+                         title='Помилка !')
             else:
                 sg.Popup('Оберіть звуковий файл для видобування тексту',
                          title='Помилка !')
@@ -36,7 +50,11 @@ def window_program():
             else:
                 sg.Popup('Оберіть звуковий файл для конвертації',
                          title='Помилка !')
-
+        
+        if event == '-CHOOSE LANG TAG-':
+            chs_lang_tag = values['-CHOOSE LANG TAG-']
+            window['-CHOOSE LANG TAG-'].update(chs_lang_tag)
+        
         if event == 'Зберегти тут':
             save_extract_text(EXTRACT)
 
